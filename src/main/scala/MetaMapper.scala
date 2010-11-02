@@ -10,7 +10,6 @@ trait BaseMetaMapper
 
 trait MetaMapper[A <: Mapper[A]] extends BaseMetaMapper with Mapper[A] {
   //  self:A=> // なんで必要なのかな？
-  println("MetaMapper run")
 
   case class FieldHolder(name: String, method: Method, field: MappedField[_, A])
 
@@ -22,12 +21,7 @@ trait MetaMapper[A <: Mapper[A]] extends BaseMetaMapper with Mapper[A] {
 
   def getMethods(mapper: Mapper[A]) = mapper.getClass.getSuperclass().getDeclaredMethods.toList
 
-  def create:A = {
-    println(this.getClass.toString)
-    println(this.getClass.getSuperclass.toString)
-    println(this.getClass.getSuperclass.getConstructors.foreach(c => println(c.toString)))
-    this.getClass.getSuperclass.newInstance.asInstanceOf[A]
-  }
+  def create:A = this.getClass.getSuperclass.newInstance.asInstanceOf[A]
 
   // ここから初期化時実行コード
   for (f <- getMethods(this)) println(f)
