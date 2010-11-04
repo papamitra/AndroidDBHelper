@@ -15,5 +15,6 @@ class AndroidDBHelper(info: ProjectInfo) extends ParentProject(info) {
     val scalatest = "org.scalatest" % "scalatest" % "1.0" % "test"
   }
 
-  class TestProject(info: ProjectInfo) extends AndroidTestProject(info) with Defaults
+//  class TestProject(info: ProjectInfo) extends AndroidTestProject(info) with Defaults{
+//  }
 }
