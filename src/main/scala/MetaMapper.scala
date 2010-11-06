@@ -1,30 +1,15 @@
 
 package org.papamitra.android.dbhelper
 
-//import _root_.scala.collection.immutable.{ SortedMap, TreeMap }
-//import _root_.scala.collection.mutable.{ListBuffer, HashMap}
-
 import java.lang.reflect.Method
 
-trait BaseMetaMapper
-
-trait MetaMapper[A <: Mapper[A]] extends BaseMetaMapper with Mapper[A] {
-  //  self:A=> // なんで必要なのかな？
+trait MetaMapper[A <: Mapper[A]] extends Mapper[A] {
 
   case class FieldHolder(name: String, method: Method, field: MappedField[_, A])
 
   def dbTableName:String
 
-//  private var mappedColumns: SortedMap[String, Method] = TreeMap()
-
-//  private var mappedColumnInfo: SortedMap[String, MappedField[AnyRef, A]] = TreeMap()
-
-  def getMethods(mapper: Mapper[A]) = mapper.getClass.getSuperclass().getDeclaredMethods.toList
-
   def create:A = this.getClass.getSuperclass.newInstance.asInstanceOf[A]
-
-  // ここから初期化時実行コード
-//  private val tArray = new ListBuffer[FieldHolder]
 
   /**
    * Find the magic mapper fields on the superclass
