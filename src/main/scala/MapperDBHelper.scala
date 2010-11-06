@@ -1,7 +1,7 @@
 
 package org.papamitra.android.dbhelper
 
-import android.content.{ ContentProvider, ContentUris, ContentValues, Context, UriMatcher }
+import android.content.{ ContentValues, Context}
 import android.database.{ Cursor, SQLException }
 import android.database.sqlite.{ SQLiteDatabase, SQLiteOpenHelper, SQLiteQueryBuilder }
 
@@ -76,9 +76,6 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
   def findAllCursor: Cursor = {
     val qb = new SQLiteQueryBuilder()
     qb setTables dbTableName
-
-    val listBuffer = new ListBuffer[A]
-
     qb.query(dbHelper.getReadableDatabase, null, null, null, null, null, null)
   }
 

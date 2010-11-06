@@ -78,29 +78,12 @@ trait MetaMapper[A <: Mapper[A]] extends Mapper[A] {
         meths ::: findForClass(clz.getSuperclass)
     }
 
-    val ret = findForClass(staringClass).removeDuplicates
+    val ret = findForClass(staringClass).distinct
 
     ret
   }
 
   val mapperAccessMethods = findMagicFields(this, this.getClass.getSuperclass)
-
-  //mappedCallbacks = mapperAccessMethods.filter(isLifecycle).map(v => (v.getName, v))
-
-/*
-  for (v <- mapperAccessMethods) {
-    v.invoke(this) match {
-      case mf: MappedField[AnyRef, A] =>
-        mf.setName(v.getName)
-	tArray += FieldHolder(mf.name, v, mf)
-//        val colName = v.getName.toLowerCase
-//        mappedColumnInfo += colName -> mf
-//        mappedColumns += colName -> v
-      case _ =>
-    }
-  }
-  val mappedFieldList = tArray.toList
-*/
 
   def fieldList = mapperAccessMethods.map(v => 
     v.invoke(this) match{
