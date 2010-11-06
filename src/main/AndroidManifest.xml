@@ -3,6 +3,6 @@
       package="org.papamitra.android.dbhelper"
       android:versionCode="1"
       android:versionName="1.0">
-    <application android:label="AndroidDBHelpers">
+    <application android:label="AndroidDBHelper">
     </application>
 </manifest> 
