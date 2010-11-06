@@ -1,8 +1,8 @@
 
 package org.papamitra.android.dbhelper
 
-import _root_.scala.collection.immutable.{ SortedMap, TreeMap }
-import _root_.scala.collection.mutable.{ListBuffer, HashMap}
+//import _root_.scala.collection.immutable.{ SortedMap, TreeMap }
+//import _root_.scala.collection.mutable.{ListBuffer, HashMap}
 
 import java.lang.reflect.Method
 
@@ -15,18 +15,16 @@ trait MetaMapper[A <: Mapper[A]] extends BaseMetaMapper with Mapper[A] {
 
   def dbTableName:String
 
-  private var mappedColumns: SortedMap[String, Method] = TreeMap()
+//  private var mappedColumns: SortedMap[String, Method] = TreeMap()
 
-  private var mappedColumnInfo: SortedMap[String, MappedField[AnyRef, A]] = TreeMap()
+//  private var mappedColumnInfo: SortedMap[String, MappedField[AnyRef, A]] = TreeMap()
 
   def getMethods(mapper: Mapper[A]) = mapper.getClass.getSuperclass().getDeclaredMethods.toList
 
   def create:A = this.getClass.getSuperclass.newInstance.asInstanceOf[A]
 
   // ここから初期化時実行コード
-  for (f <- getMethods(this)) println(f)
-
-  val tArray = new ListBuffer[FieldHolder]
+//  private val tArray = new ListBuffer[FieldHolder]
 
   /**
    * Find the magic mapper fields on the superclass
@@ -104,19 +102,28 @@ trait MetaMapper[A <: Mapper[A]] extends BaseMetaMapper with Mapper[A] {
 
   //mappedCallbacks = mapperAccessMethods.filter(isLifecycle).map(v => (v.getName, v))
 
+/*
   for (v <- mapperAccessMethods) {
     v.invoke(this) match {
       case mf: MappedField[AnyRef, A] =>
         mf.setName(v.getName)
 	tArray += FieldHolder(mf.name, v, mf)
-        val colName = v.getName.toLowerCase
-        mappedColumnInfo += colName -> mf
-        mappedColumns += colName -> v
-	println(colName)
+//        val colName = v.getName.toLowerCase
+//        mappedColumnInfo += colName -> mf
+//        mappedColumns += colName -> v
       case _ =>
     }
   }
-
   val mappedFieldList = tArray.toList
+*/
+
+  def fieldList = mapperAccessMethods.map(v => 
+    v.invoke(this) match{
+    case mf: MappedField[AnyRef, A] =>
+      mf.setName(v.getName)
+      FieldHolder(mf.name,v,mf)
+  })
+
+  val mappedFieldList = fieldList
 
 }

@@ -9,7 +9,7 @@ trait SingleTableDBHelper[A <: Mapper[A]] extends MapperDBHelper[A] { self: Meta
   val dbVersion:Int
   def dbContext:Context
 
-  override def dbHelper = new DBOpenHelper(dbContext)
+  lazy val dbHelper = new DBOpenHelper(dbContext)
 
   def onCreate(db:SQLiteDatabase){
     db.execSQL(createTableSQL)
