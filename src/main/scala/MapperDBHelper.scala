@@ -57,7 +57,7 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
     }
 
     dbHelper.getWritableDatabase.update(dbTableName, values,
-      self.primaryKey.name + " = " + mapper.primaryKey.is,
+      self.primaryKeyField.name + " = " + mapper.primaryKeyField.is.get,
       null)
   }
 
@@ -101,13 +101,13 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
   }
 
   def valput(v: ContentValues, name: String, field: MappedField[_, A]) =
-    field.is match {
+    field.is map(_ match {
       case i: Int => v.put(name, i.asInstanceOf[java.lang.Integer])
       case str: String => v.put(name, str.asInstanceOf[java.lang.String])
       case l: Long => v.put(name, l.asInstanceOf[java.lang.Long])
       case d: Double => v.put(name, d.asInstanceOf[java.lang.Double])
       case _ => throw new Exception("wrong valput")
-    }
+    })
 
   import scala.reflect.Manifest
   def getDbValue[T](cur: Cursor, field: MappedField[T, A])(implicit m: Manifest[T]) {
