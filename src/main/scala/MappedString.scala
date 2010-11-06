@@ -5,5 +5,4 @@ abstract class MappedString[A <: Mapper[A]](val fieldOwner: A) extends MappedFie
 
   def dbColumnType = classOf[java.lang.String]
 
-  override def isPrimaryKey = false
 }

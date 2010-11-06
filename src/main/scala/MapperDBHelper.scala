@@ -42,7 +42,7 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
     mappedFieldList.map {
       case FieldHolder(name, _, field) =>
         name + " " + field.dbColumnTypeStr +
-          (if (field.isPrimaryKey) " PRIMARY KEY AUTOINCREMENT " else "")
+          (if (primaryKeyField == field) " PRIMARY KEY AUTOINCREMENT " else "")
     }.mkString(",") +
     ");"
 
