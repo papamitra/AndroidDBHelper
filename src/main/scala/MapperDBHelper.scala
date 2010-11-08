@@ -1,7 +1,7 @@
 
 package org.papamitra.android.dbhelper
 
-import android.content.{ ContentValues, Context}
+import android.content.{ ContentValues, Context }
 import android.database.{ Cursor, SQLException }
 import android.database.sqlite.{ SQLiteDatabase, SQLiteOpenHelper, SQLiteQueryBuilder }
 
@@ -42,11 +42,11 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
     mappedFieldList.map {
       case FieldHolder(name, _, field) =>
         name + " " + field.dbColumnTypeStr +
-          (if (primaryKeyField == field) " PRIMARY KEY AUTOINCREMENT " else "")
+          (if (primaryKeyField == field) " PRIMARY KEY AUTOINCREMENT" else "")
     }.mkString(",") +
     ");"
 
-  def dropTableSQL = "DROP TABLE IF EXISTS " + dbTableName
+  def dropTableSQL = "DROP TABLE IF EXISTS " + dbTableName + ";"
 
   def update(mapper: A) {
     val values = new ContentValues()
@@ -88,8 +88,7 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
         mappedFieldList.foreach {
           case FieldHolder(name, meth, _) =>
             val field = meth.invoke(mapper).asInstanceOf[MappedField[_, A]]
-      //      getDbValue(cursor, field)
-	  field(dbValue(cursor, field.name))
+            field(dbValue(cursor, field.name))
         }
         listBuffer += mapper
       }
@@ -98,7 +97,7 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
   }
 
   def valput(v: ContentValues, name: String, field: MappedField[_, A]) =
-    field.is map(_ match {
+    field.is map (_ match {
       case i: Int => v.put(name, i.asInstanceOf[java.lang.Integer])
       case str: String => v.put(name, str.asInstanceOf[java.lang.String])
       case l: Long => v.put(name, l.asInstanceOf[java.lang.Long])
@@ -107,17 +106,8 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
     })
 
   import scala.reflect.Manifest
-  def getDbValue[T](cur: Cursor, field: MappedField[T, A])(implicit m: Manifest[T]) {
-    val colIndex = cur.getColumnIndexOrThrow(field.name)
-    m match {
-      case c if c equals manifest[Int] => field.asInstanceOf[MappedField[Int, A]].apply(cur.getInt(colIndex))
-      case c if c equals manifest[String] => field.asInstanceOf[MappedField[String, A]].apply(cur.getString(colIndex))
-      case c if c equals manifest[Long] => field.asInstanceOf[MappedField[Long, A]].apply(cur.getLong(colIndex))
-      case c if c equals manifest[Double] => field.asInstanceOf[MappedField[Double, A]].apply(cur.getDouble(colIndex))
-    }
-  }
 
-  def dbValue[T](cur: Cursor, colName:String)(implicit m: Manifest[T]):T = {
+  def dbValue[T](cur: Cursor, colName: String)(implicit m: Manifest[T]): T = {
     val colIndex = cur.getColumnIndexOrThrow(colName)
     (m match {
       case c if c equals manifest[Int] => cur.getInt(colIndex)
