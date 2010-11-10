@@ -65,4 +65,20 @@ class Specs extends Spec with ShouldMatchers {
       TestTable.dropTableSQL should be ("DROP TABLE IF EXISTS test_table;")
     }
   }
+
+  describe("Query"){
+    it("=== でのSQL生成"){
+      val q = TestTable.test_txt === "test"
+      q.toSQL should be("(test_txt = \"test\")")
+    }
+    it("in_ でSQL生成"){
+      val q = TestTable.test_txt in_("test1", "test2", "test3")
+      q.toSQL should be("""(test_txt IN ("test1","test2","test3"))""")
+    }
+
+    it("and_ でSQL生成"){
+      val q = TestTable.test_txt === "test1" and_ TestTable.test_txt === "test2"
+      q.toSQL should be("""((test_txt = "test1") AND (test_txt = "test2"))""")
+    }
+  }
 }

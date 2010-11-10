@@ -73,16 +73,17 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
 
   }
 
-  def findAllCursor: Cursor = {
+  def findAllCursor(where: Option[Where] = None): Cursor = {
     val qb = new SQLiteQueryBuilder()
     qb setTables dbTableName
+    where foreach (w => qb.appendWhere(w.toSQL))
     qb.query(dbHelper.getReadableDatabase, null, null, null, null, null, null)
   }
 
-  def findAll: Seq[A] = {
+  def findAll(where: Option[Where]): Seq[A] = {
     val listBuffer = new ListBuffer[A]
 
-    using(findAllCursor) { c =>
+    using(findAllCursor(where)) { c =>
       c.foreach { cursor =>
         val mapper = self.create
         mappedFieldList.foreach {
@@ -95,6 +96,9 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
     }
     listBuffer.toList
   }
+
+  def findAll:Seq[A] = findAll(None)
+  def findAll(where: Where):Seq[A] = findAll(Some(where))
 
   def valput(v: ContentValues, name: String, field: MappedField[_, A]) =
     field.is map (_ match {
