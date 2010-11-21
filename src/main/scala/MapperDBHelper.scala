@@ -76,14 +76,13 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
   def findAllCursor(where: Option[Where] = None): Cursor = {
     val qb = new SQLiteQueryBuilder()
     qb setTables dbTableName
-    where foreach (w => qb.appendWhere(w.toSQL))
+    where foreach (w => qb.appendWhereEscapeString(w.toSQL))
     qb.query(dbHelper.getReadableDatabase, null, null, null, null, null, null)
   }
 
-  def findAll(where: Option[Where]): Seq[A] = {
-    val listBuffer = new ListBuffer[A]
-
+  def findAll(where: Option[Where]): Seq[A] =
     using(findAllCursor(where)) { c =>
+      val listBuffer = new ListBuffer[A]
       c.foreach { cursor =>
         val mapper = self.create
         mappedFieldList.foreach {
@@ -93,12 +92,11 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
         }
         listBuffer += mapper
       }
+      listBuffer.toList
     }
-    listBuffer.toList
-  }
 
-  def findAll:Seq[A] = findAll(None)
-  def findAll(where: Where):Seq[A] = findAll(Some(where))
+  def findAll: Seq[A] = findAll(None)
+  def findAll(where: Where): Seq[A] = findAll(Some(where))
 
   def valput(v: ContentValues, name: String, field: MappedField[_, A]) =
     field.is map (_ match {
@@ -106,7 +104,7 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
       case str: String => v.put(name, str.asInstanceOf[java.lang.String])
       case l: Long => v.put(name, l.asInstanceOf[java.lang.Long])
       case d: Double => v.put(name, d.asInstanceOf[java.lang.Double])
-      case b: Boolean => v.put(name, (if(b) 1 else 0).asInstanceOf[java.lang.Integer])
+      case b: Boolean => v.put(name, (if (b) 1 else 0).asInstanceOf[java.lang.Integer])
       case _ => throw new Exception("wrong valput")
     })
 
