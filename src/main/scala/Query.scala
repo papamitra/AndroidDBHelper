@@ -20,11 +20,11 @@ case class ===[T, A <: Mapper[A]](lhs: MappedField[T, A], v: T) extends Where {
   def toSQL = "(" + lhs.name + " = " + lhs.valToSQL(v) + ")"
 }
 
-case class >>[T, A <: Mapper[A]](lhs: MappedField[T, A], v: T) extends Where {
+case class Gt[T, A <: Mapper[A]](lhs: MappedField[T, A], v: T) extends Where {
   def toSQL = "(" + lhs.name + " > " + lhs.valToSQL(v) + ")"
 }
 
-case class <<[T, A <: Mapper[A]](lhs: MappedField[T, A], v: T) extends Where {
+case class Lt[T, A <: Mapper[A]](lhs: MappedField[T, A], v: T) extends Where {
   def toSQL = "(" + lhs.name + " < " + lhs.valToSQL(v) + ")"
 }
 

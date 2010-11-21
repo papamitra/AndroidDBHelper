@@ -32,7 +32,7 @@ trait MappedField[FieldType <: Any, OwnerType <: Mapper[OwnerType]] {
   }
 
   def ===(rhs: FieldType) = new ===(this, rhs)
-  def >>(rhs: FieldType) = new >>(this, rhs)
-  def <<(rhs: FieldType) = new <<(this, rhs)
+  def > (rhs: FieldType) = new Gt(this, rhs)
+  def < (rhs: FieldType) = new Lt(this, rhs)
   def in_(rhs: FieldType*) = new In(this, rhs)
 }
