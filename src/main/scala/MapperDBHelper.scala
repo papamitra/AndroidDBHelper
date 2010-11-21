@@ -106,6 +106,7 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
       case str: String => v.put(name, str.asInstanceOf[java.lang.String])
       case l: Long => v.put(name, l.asInstanceOf[java.lang.Long])
       case d: Double => v.put(name, d.asInstanceOf[java.lang.Double])
+      case b: Boolean => v.put(name, (if(b) 1 else 0).asInstanceOf[java.lang.Integer])
       case _ => throw new Exception("wrong valput")
     })
 
@@ -118,6 +119,7 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
       case c if c equals manifest[String] => cur.getString(colIndex)
       case c if c equals manifest[Long] => cur.getLong(colIndex)
       case c if c equals manifest[Double] => cur.getDouble(colIndex)
+      case c if c equals manifest[Boolean] => cur.getInt(colIndex)
     }).asInstanceOf[T]
   }
 
