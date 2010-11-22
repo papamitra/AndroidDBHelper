@@ -17,17 +17,17 @@ class Or(lhs: Where, rhs: Where) extends Where {
 }
 
 case class ===[T, A <: Mapper[A]](lhs: MappedField[T, A], v: T) extends Where {
-  def toSQL = "(" + lhs.name + " = " + lhs.valToSQL(v) + ")"
+  def toSQL = "(" + lhs.toSQL + " = " + lhs.valToSQL(v) + ")"
 }
 
 case class Gt[T, A <: Mapper[A]](lhs: MappedField[T, A], v: T) extends Where {
-  def toSQL = "(" + lhs.name + " > " + lhs.valToSQL(v) + ")"
+  def toSQL = "(" + lhs.toSQL + " > " + lhs.valToSQL(v) + ")"
 }
 
 case class Lt[T, A <: Mapper[A]](lhs: MappedField[T, A], v: T) extends Where {
-  def toSQL = "(" + lhs.name + " < " + lhs.valToSQL(v) + ")"
+  def toSQL = "(" + lhs.toSQL + " < " + lhs.valToSQL(v) + ")"
 }
 
 case class In[T, A <: Mapper[A]](lhs: MappedField[T,A], lst: Seq[T]) extends Where{
-  def toSQL = "(" + lhs.name + " IN (" + lst.map(lhs.valToSQL(_)).mkString(",") + "))"
+  def toSQL = "(" + lhs.toSQL + " IN (" + lst.map(lhs.valToSQL(_)).mkString(",") + "))"
 }
