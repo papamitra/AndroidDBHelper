@@ -76,7 +76,7 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
   def findAllCursor(where: Option[Where] = None): Cursor = {
     val qb = new SQLiteQueryBuilder()
     qb setTables dbTableName
-    where foreach (w => qb.appendWhereEscapeString(w.toSQL))
+    where foreach (w => qb.appendWhere(w.toSQL))
     qb.query(dbHelper.getReadableDatabase, null, null, null, null, null, null)
   }
 
