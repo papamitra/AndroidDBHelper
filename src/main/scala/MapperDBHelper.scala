@@ -97,6 +97,7 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
 
   def findAll: Seq[A] = findAll(None)
   def findAll(where: Where): Seq[A] = findAll(Some(where))
+  def findAllCursor(where: Where): Cursor = findAllCursor(Some(where))				      
 
   def valput(v: ContentValues, name: String, field: MappedField[_, A]) =
     field.is map (_ match {
