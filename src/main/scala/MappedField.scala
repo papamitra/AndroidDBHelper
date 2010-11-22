@@ -17,6 +17,9 @@ trait MappedField[FieldType <: Any, OwnerType <: Mapper[OwnerType]] {
 
   def name:String = _name.getOrElse("")
 
+  // TODO
+  def toSQL:String = fieldOwner.asInstanceOf[MetaMapper[OwnerType]].dbTableName + "." + name
+
   def fieldOwner: OwnerType
 
   def set(f: FieldType): Option[FieldType] = { data = Some(f); data }
