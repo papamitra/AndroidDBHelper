@@ -4,6 +4,7 @@ import android.database.DatabaseUtils
 
 abstract class MappedString[A <: Mapper[A]](val fieldOwner: A) extends MappedField[String, A] {
   def dbColumnTypeStr = "TEXT"
+  def default = ""
 
   override def valToSQL(v:String) = DatabaseUtils.sqlEscapeString(v)
 }

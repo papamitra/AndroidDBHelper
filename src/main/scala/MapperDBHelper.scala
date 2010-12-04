@@ -57,7 +57,7 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
     }
 
     dbHelper.getWritableDatabase.update(dbTableName, values,
-      self.primaryKeyField.name + " = " + mapper.primaryKeyField.is.get,
+      self.primaryKeyField.name + " = " + mapper.primaryKeyField.is,
       null)
   }
 
@@ -81,33 +81,31 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
   }
 
   def findAll(where: Option[Where]): Seq[A] =
-    using(findAllCursor(where)) { c =>
-      val listBuffer = new ListBuffer[A]
-      c.foreach { cursor =>
-        val mapper = self.create
-        mappedFieldList.foreach {
-          case FieldHolder(name, meth, _) =>
-            val field = meth.invoke(mapper).asInstanceOf[MappedField[_, A]]
-            field(dbValue(cursor, field.name))
-        }
-        listBuffer += mapper
-      }
-      listBuffer.toList
+    using(findAllCursor(where)) { cur => for( c <- cur) yield cursorToMapper(c)}
+
+  def cursorToMapper(c: Cursor) = {
+    val mapper = self.create
+    mappedFieldList.foreach {
+      case FieldHolder(name, meth, _) =>
+        val field = meth.invoke(mapper).asInstanceOf[MappedField[_, A]]
+        field(dbValue(c, field.name))
     }
+    mapper
+  }
 
   def findAll: Seq[A] = findAll(None)
   def findAll(where: Where): Seq[A] = findAll(Some(where))
-  def findAllCursor(where: Where): Cursor = findAllCursor(Some(where))				      
+  def findAllCursor(where: Where): Cursor = findAllCursor(Some(where))
 
   def valput(v: ContentValues, name: String, field: MappedField[_, A]) =
-    field.is map (_ match {
+    field.is match {
       case i: Int => v.put(name, i.asInstanceOf[java.lang.Integer])
       case str: String => v.put(name, str.asInstanceOf[java.lang.String])
       case l: Long => v.put(name, l.asInstanceOf[java.lang.Long])
       case d: Double => v.put(name, d.asInstanceOf[java.lang.Double])
       case b: Boolean => v.put(name, (if (b) 1 else 0).asInstanceOf[java.lang.Integer])
       case _ => throw new Exception("wrong valput")
-    })
+    }
 
   import scala.reflect.Manifest
 
