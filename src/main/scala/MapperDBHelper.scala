@@ -81,7 +81,7 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
   }
 
   def findAll(where: Option[Where]): Seq[A] =
-    using(findAllCursor(where)) { cur => for( c <- cur) yield cursorToMapper(c)}
+    using(findAllCursor(where)) { _.map(cursorToMapper).toList}
 
   def cursorToMapper(c: Cursor) = {
     val mapper = self.create
