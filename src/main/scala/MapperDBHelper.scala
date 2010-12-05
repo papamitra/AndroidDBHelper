@@ -81,14 +81,15 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
   }
 
   def findAll(where: Option[Where]): Seq[A] =
-    using(findAllCursor(where)) { _.map(cursorToMapper).toList}
+    using(findAllCursor(where)) { _.map(cursorToMapper).toList }
 
   def cursorToMapper(c: Cursor) = {
     val mapper = self.create
     mappedFieldList.foreach {
-      case FieldHolder(name, meth, _) =>
+      case FieldHolder(name, meth, mf) =>
         val field = meth.invoke(mapper).asInstanceOf[MappedField[_, A]]
-        field(dbValue(c, field.name))
+//        field(dbValue(c, name))
+      valget(c,name, field)
     }
     mapper
   }
@@ -107,17 +108,20 @@ trait MapperDBHelper[A <: Mapper[A]] { self: MetaMapper[A] =>
       case _ => throw new Exception("wrong valput")
     }
 
-  import scala.reflect.Manifest
-
-  def dbValue[T](cur: Cursor, colName: String)(implicit m: Manifest[T]): T = {
+  def valget(cur: Cursor, colName: String, field: MappedField[_, A]) {
     val colIndex = cur.getColumnIndexOrThrow(colName)
-    (m match {
-      case c if c equals manifest[Int] => cur.getInt(colIndex)
-      case c if c equals manifest[String] => cur.getString(colIndex)
-      case c if c equals manifest[Long] => cur.getLong(colIndex)
-      case c if c equals manifest[Double] => cur.getDouble(colIndex)
-      case c if c equals manifest[Boolean] => cur.getInt(colIndex)
-    }).asInstanceOf[T]
+    field.is match {
+      case _: Int => fieldset[Int](field, cur.getInt(colIndex))
+      case _:String => fieldset[String](field, cur.getString(colIndex))
+      case _:Long => fieldset[Long](field, cur.getLong(colIndex))
+      case _:Double => fieldset[Double](field, cur.getDouble(colIndex))
+      case _:Boolean => fieldset[Boolean](field, (cur.getInt(colIndex) == 1))
+    }
+  }
+
+  def fieldset[T](field: MappedField[_, A], v: T) {
+    val f = field.asInstanceOf[MappedField[T, A]]
+    f(v)
   }
 
 }
